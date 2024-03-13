@@ -79,16 +79,21 @@ class SettingsEditText extends Component {
     disabledOverlayStyle: PropTypes.object,
     titleProps: PropTypes.object,
     titleStyle: PropTypes.object,
-    title: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+      PropTypes.object,
+    ]).isRequired,
     valueProps: PropTypes.object,
     valueStyle: PropTypes.object,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]).isRequired,
     valuePlaceholder: PropTypes.string,
     valueFormat: PropTypes.func,
-    negativeButtonTitle: PropTypes.string.isRequired,
-    positiveButtonTitle: PropTypes.string.isRequired,
     dialogDescription: PropTypes.string,
-    onValueChange: PropTypes.func.isRequired,
+    onValueChange: PropTypes.func,
     disabled: PropTypes.bool,
     iosDialogInputType: PropTypes.oneOf([
       constants.iosDialogInputType.DEFAULT,
@@ -145,13 +150,11 @@ class SettingsEditText extends Component {
 
   renderAndroidDialog = async () => {
     const {
-      title, dialogDescription, positiveButtonTitle, negativeButtonTitle, value,
+      title, dialogDescription, value,
       androidDialogOptions, androidDialogInputType,
     } = this.props;
     const { action, text } = await DialogAndroid.prompt(title, dialogDescription, {
       defaultValue: value || '',
-      positiveText: positiveButtonTitle,
-      negativeText: negativeButtonTitle,
       keyboardType: androidDialogInputType,
       ...androidDialogOptions,
     });
@@ -165,7 +168,7 @@ class SettingsEditText extends Component {
 
   openDialog = async () => {
     const {
-      title, dialogDescription, negativeButtonTitle, positiveButtonTitle,
+      title, dialogDescription,
       iosDialogInputType, value,
     } = this.props;
     if (Platform.OS === 'ios') {
@@ -173,9 +176,9 @@ class SettingsEditText extends Component {
         title,
         dialogDescription,
         [
-          { text: negativeButtonTitle, onPress: () => {}, style: 'cancel' },
+          { text: "", onPress: () => { }, style: 'cancel' },
           {
-            text: positiveButtonTitle,
+            text: "",
             onPress: this.onValueChange,
           },
         ],
